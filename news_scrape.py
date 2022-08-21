@@ -1,3 +1,4 @@
+import json
 from unicodedata import name
 from selenium import webdriver
 import time
@@ -15,8 +16,7 @@ News_user_img=[]
 News_user=[]
 Latitude=[]
 Longitude=[]
-user_lists=[]
-user_dict={}
+
 def get_neighborhood(url):
     driver=webdriver.Chrome("chromedriver.exe")
     url=url
@@ -99,24 +99,35 @@ def get_news_and_details(city,tag):
             Longitude.append(Long)
             print(err)
             pass
-
+user_lists=[]
+user_dict={}
+try:
+    main_list=open("user_list.txt","r").read()
+    user_dict=open("user_dict.json","r").read().replace("'",'"')
+    # print(user_dict)
+    user_dict=json.loads(user_dict)
+except:
+    main_list=[]
 def main(wiki_url,city,tag):
     get_neighborhood(wiki_url)           
     get_news_and_details(city,tag)      
     print(len(images))
     row=0
     for r in range(100):
-        # if News_user[row] in user_lists:
-        #     f=user_dict[News_user[row]]
-        #     print(" user already inserted")
-        # else:
-        f=insertUser(News_user[row],News_user_img[row])
-        user_lists.append(News_user[row])
-        user_dict[News_user[row]]=f
+        if News_user[row] in main_list:
+            f=user_dict[News_user[row]]
+            user_lists.append(News_user[row])
+            print(" user already inserted")
+        else:
+            f=insertUser(News_user[row],News_user_img[row])
+            user_lists.append(News_user[row])
+            user_dict[News_user[row]]=f
         news_insert(Headlines[row],images[row],Latitude[row],Longitude[row],date[row],f)
         row+=1
     f1= open("user_list.txt","w")
-    f1.write(user_lists)
+    f1.write(str(user_lists))
+    f2= open("user_dict.json","w")
+    f2.write(str(user_dict))
 
 
 
