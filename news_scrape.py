@@ -22,9 +22,14 @@ def get_neighborhood(url):
     url=url
     driver.get(url)
     all_links=driver.find_elements(By.XPATH,'//*[@id="mw-content-text"]/div[1]/ul/li')
-
     for a in all_links:
         names.append(a.text) 
+    if len(names)<30:
+        names=[]
+        all_links=driver.find_elements(By.XPATH,'//*[@id="mw-content-text"]/div[1]/table[2]/tbody/tr')
+        for a in all_links:
+            names.append(a.text)
+
 ###########################################################################################
 
 def get_news_and_details(city,tag):
